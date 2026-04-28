@@ -1,0 +1,29 @@
+{
+  "name": "glk",
+  "version": "1.0.0",
+  "description": "Notre projet est un CMS, Certes le but initial est l'apprentissage, mais il vise a faciliter la création des blogs.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Glan-kig/Glk.git"
+  },
+  "keywords": [],
+  "author": "Vlan",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Glan-kig/Glk/issues"
+  },
+  "homepage": "https://github.com/Glan-kig/Glk#readme",
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.3",
+    "pg": "^8.20.0"
+  }
+}
