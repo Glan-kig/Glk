@@ -2,8 +2,9 @@ from django.shortcuts import render
 from rest_framework import viewsets, generics, permissions
 from rest_framework.response import Response
 from rest_framework.request import Request
-from .models import Post, Category, CustomUser
-from .serializers import PostSerializer, CategorySerializer, UserSerializer
+from .models import Post, Category, CustomUser, Article
+from .serializers import PostSerializer, CategorySerializer, UserSerializer, ArticleSerializer
+from .permissions import IsAdminOrEditor
 from django.contrib.auth import authenticate
 
 class PostViewSet(viewsets.ModelViewSet):
@@ -32,3 +33,14 @@ class LoginView(generics.GenericAPIView):
         if user:
             return Response({"message": "Login successful", "user": UserSerializer(user).data})
         return Response({"message": "Invalid credentials"}, status=400)
+    
+class ArticleViewSet(viewsets.ModelViewSet):
+    queryset = Article.objects.all()
+    serializer_class = ArticleSerializer
+    permission_classes: list = [permissions.IsAuthenticated, IsAdminOrEditor]
+
+    def create(self, request: Request, *args, **kwargs) -> Response:
+        return super().create(request, *args, **kwargs)
+    
+    def update(self, request: Request, *args, **kwargs) -> Response:
+        return super().update(request, *args, **kwargs)
