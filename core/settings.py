@@ -120,7 +120,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-AUTH_USER_MODEL = "content.CustomUser"
+AUTH_USER_MODEL = 'content.CustomUser'
 
 
 # Internationalization

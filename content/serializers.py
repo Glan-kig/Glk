@@ -14,4 +14,4 @@ class PostSerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
-        fields = list[str] = ["id", "username", "email", "role"]
+        fields: list[str] = ["id", "username", "email", "role"]
