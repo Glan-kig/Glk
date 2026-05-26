@@ -2,8 +2,8 @@ from django.shortcuts import render
 from rest_framework import viewsets, generics, permissions
 from rest_framework.response import Response
 from rest_framework.request import Request
-from .models import Post, Category, CustomUser, Article
-from .serializers import PostSerializer, CategorySerializer, UserSerializer, ArticleSerializer
+from .models import Post, Category, CustomUser, Article, Tag
+from .serializers import PostSerializer, CategorySerializer, UserSerializer, ArticleSerializer, TagSerializer
 from .permissions import IsAdminOrEditor
 from django.contrib.auth import authenticate
 
@@ -14,6 +14,12 @@ class PostViewSet(viewsets.ModelViewSet):
 class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
+    permission_classes: list = [permissions.IsAuthenticated, IsAdminOrEditor]
+
+class TagViewSet(viewsets.ModelViewSet):
+    queryset = Tag.objects.all()
+    serializer_class = TagSerializer
+    permission_classes: list = [permissions.IsAuthenticated, IsAdminOrEditor]
 
 class RegisterView(generics.CreateAPIView):
     queryset = CustomUser.objects.all()

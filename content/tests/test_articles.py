@@ -1,7 +1,6 @@
 import pytest
 from django.contrib.auth import get_user_model
 from rest_framework.test import APIClient
-from content.models import Article
 
 User = get_user_model()
 

@@ -1,10 +1,15 @@
 from rest_framework import serializers
-from .models import Post, Category, CustomUser, Article
+from .models import Post, Category, CustomUser, Article, Tag
 
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
-        fields: list[str] = '__all__'
+        fields: list[str] = ['id', 'name']
+
+class TagSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Tag
+        fields: list[str] = ['id', 'name']
     
 class PostSerializer(serializers.ModelSerializer):
     class Meta:
@@ -17,6 +22,9 @@ class UserSerializer(serializers.ModelSerializer):
         fields: list[str] = ["id", "username", "email", "role"]
 
 class ArticleSerializer(serializers.ModelSerializer):
+    categories = CategorySerializer(many=True, read_only=True)
+    tags = TagSerializer(many=True, read_only=True)
+
     class Meta:
         model = Article
-        fields: list[str] = ["id", "title", "content", "author", "created_at", "updated_at"]
+        fields: list[str] = ["id", "title", "content", "author", "categories", "tags", "created_at", "updated_at"]

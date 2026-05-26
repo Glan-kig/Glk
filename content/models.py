@@ -3,9 +3,15 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 
 class Category(models.Model):
-    name: str = models.CharField(max_length=100)
+    name: str = models.CharField(max_length=100, unique=True)
 
-    def __str__(self):
+    def __str__(self) -> str:
+        return self.name
+    
+class Tag(models.Model):
+    name: str = models.CharField(max_length=100, unique=True)
+
+    def __str__(self) -> str:
         return self.name
     
 class CustomUser(AbstractUser):
@@ -16,7 +22,7 @@ class CustomUser(AbstractUser):
     ]
     role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='author')
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"{self.username} ({self.role})"
     
 class Post(models.Model):
@@ -34,6 +40,8 @@ class Article(models.Model):
     title: str = models.CharField(max_length=200)
     content: str = models.TextField()
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    categories = models.ManyToManyField(Category, related_name='articles')
+    tags = models.ManyToManyField(Tag, related_name='articles')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
