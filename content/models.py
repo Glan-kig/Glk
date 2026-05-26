@@ -47,3 +47,11 @@ class Article(models.Model):
 
     def __str__(self) -> str:
         return self.title
+    
+class Media(models.Model):
+    file: str = models.FileField(upload_to='media/')
+    uploaded_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self) -> str:
+        return f"Media {self.id} uploaded by {self.uploaded_by.username}"

@@ -122,6 +122,11 @@ AUTH_PASSWORD_VALIDATORS = [
 
 AUTH_USER_MODEL = 'content.CustomUser'
 
+# upload media files
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / "media"
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/

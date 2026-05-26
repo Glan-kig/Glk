@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Post, Category, CustomUser, Article, Tag
+from .models import Post, Category, CustomUser, Article, Tag, Media
 
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
@@ -28,3 +28,8 @@ class ArticleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Article
         fields: list[str] = ["id", "title", "content", "author", "categories", "tags", "created_at", "updated_at"]
+
+class MediaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Media
+        fields: list[str] = ["id", "file", "uploaded_by", "created_at"]

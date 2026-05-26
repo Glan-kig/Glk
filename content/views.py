@@ -2,8 +2,8 @@ from django.shortcuts import render
 from rest_framework import viewsets, generics, permissions
 from rest_framework.response import Response
 from rest_framework.request import Request
-from .models import Post, Category, CustomUser, Article, Tag
-from .serializers import PostSerializer, CategorySerializer, UserSerializer, ArticleSerializer, TagSerializer
+from .models import Post, Category, CustomUser, Article, Tag, Media
+from .serializers import PostSerializer, CategorySerializer, UserSerializer, ArticleSerializer, TagSerializer, MediaSerializer
 from .permissions import IsAdminOrEditor
 from django.contrib.auth import authenticate
 
@@ -50,3 +50,11 @@ class ArticleViewSet(viewsets.ModelViewSet):
     
     def update(self, request: Request, *args, **kwargs) -> Response:
         return super().update(request, *args, **kwargs)
+    
+class MediaViewSet(viewsets.ModelViewSet):
+    queryset = Media.objects.all()
+    serializer_class = MediaSerializer
+    permission_classes: list = [permissions.IsAuthenticated, IsAdminOrEditor]
+
+    def create(self, request: Request, *args, **kwargs) -> Response:
+        return super().create(request, *args, **kwargs)
