@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from tinymce.models import HTMLField
 
 class Category(models.Model):
     name: str = models.CharField(max_length=100, unique=True)
@@ -38,7 +39,7 @@ class Post(models.Model):
     
 class Article(models.Model):
     title: str = models.CharField(max_length=200)
-    content: str = models.TextField()
+    content = HTMLField() # editeur WYSIWYG pour le contenu de l'article 
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     categories = models.ManyToManyField(Category, related_name='articles')
     tags = models.ManyToManyField(Tag, related_name='articles')
@@ -49,7 +50,7 @@ class Article(models.Model):
         return self.title
     
 class Media(models.Model):
-    file: str = models.FileField(upload_to='media/')
+    file: str = models.FileField(upload_to='uploads/')
     uploaded_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
 
