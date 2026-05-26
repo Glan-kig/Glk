@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, AbstractUser
 
 class Category(models.Model):
     name = models.CharField(max_length=100)
@@ -17,3 +17,14 @@ class Post(models.Model):
 
     def __str__(self):
         return self.title
+    
+class CustomUser(AbstractUser):
+    ROLE_CHOICES = [
+        ('admin', 'Admin'),
+        ('editor', 'Editor'),
+        ('author', 'Author'),
+    ]
+    role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='author')
+
+    def __str__(self):
+        return f"{self.username} ({self.role})"
