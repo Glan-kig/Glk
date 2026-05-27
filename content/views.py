@@ -7,6 +7,8 @@ from .models import Post, Category, CustomUser, Article, Tag, Media, Notificatio
 from .serializers import PostSerializer, CategorySerializer, UserSerializer, ArticleSerializer, TagSerializer, MediaSerializer, NotificationSerializer
 from .permissions import IsAdminOrEditor, CanPublishArticle, CanCreateDraft
 from django.contrib.auth import authenticate, get_user_model
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
 
 User = get_user_model()
 
@@ -63,12 +65,21 @@ class ArticleViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer) -> None:
         article = serializer.save()
 
-        editors = User.objects.filter(role__in=['admin', 'editor'])
+        editors = User.objects.filter(role__in=['editor', 'admin'])
         for editor in editors:
             Notification.objects.create(
                 recipient=editor, 
-                message=f"Nouvel article en attente : '{article.title}' créé par {article.author.username}"
+                message=f'Nouvel article en attente : {article.title}'
             )
+
+        channel_layer = get_channel_layer()
+        async_to_sync(channel_layer.group_send)(
+            'notifications',
+            {
+                'type': 'send_notification',
+                'message': f'Nouvel article en attente : {article.title}'
+            }
+        )
 
     @action(detail=True, methods=['post'])
     def publish(self, request: Request, pk=None) -> Response:
