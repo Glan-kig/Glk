@@ -38,16 +38,23 @@ class Post(models.Model):
         return self.title
     
 class Article(models.Model):
+    STATUS_CHOICES = [
+        ('draft', 'Draft'),
+        ('pending', 'Pending Review'),
+        ('published', 'Published'),
+    ]
+
     title: str = models.CharField(max_length=200)
     content = HTMLField() # editeur WYSIWYG pour le contenu de l'article 
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    status: str = models.CharField(max_length=20, choices=STATUS_CHOICES, default='draft')
     categories = models.ManyToManyField(Category, related_name='articles')
     tags = models.ManyToManyField(Tag, related_name='articles')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self) -> str:
-        return self.title
+        return f"{self.title} ({self.status})"
     
 class Media(models.Model):
     file: str = models.FileField(upload_to='uploads/')

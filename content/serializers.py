@@ -27,7 +27,7 @@ class ArticleSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Article
-        fields: list[str] = ["id", "title", "content", "author", "categories", "tags", "created_at", "updated_at"]
+        fields: list[str] = ["id", "title", "content", "author", "status", "categories", "tags", "created_at", "updated_at"]
 
 class MediaSerializer(serializers.ModelSerializer):
     class Meta:

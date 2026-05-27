@@ -19,8 +19,20 @@ def test_create_article() -> None:
 @pytest.mark.django_db
 def test_article_permissions() -> None:
     client: APIClient = APIClient()
+    user: User = User.objects.create_user(username='authoruser', password='authorpass', role='subscriber')
+    client.force_authenticate(user=user)
+
+    response = client.post('/api/articles/', {'title': 'Unauthorized Article', 'content': 'This should not be created.', 'status': 'published', 'author': user.id}, format='json')
+    assert response.status_code == 403
+
+@pytest.mark.django_db
+def test_publish_permission() -> None:
+    client: APIClient = APIClient()
     user: User = User.objects.create_user(username='authoruser', password='authorpass', role='author')
     client.force_authenticate(user=user)
 
-    response = client.post('/api/articles/', {'title': 'Unauthorized Article', 'content': 'This should not be created.', 'author': user.id}, format='json')
-    assert response.status_code == 403
+    article_response = client.post('/api/articles/', {'title': 'Draft Article', 'content': 'This is a draft article.', 'author': user.id}, format='json')
+    article_id = article_response.data['id']
+
+    publish_response = client.post(f'/api/articles/{article_id}/publish/')
+    assert publish_response.status_code == 403

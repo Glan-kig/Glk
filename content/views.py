@@ -2,9 +2,10 @@ from django.shortcuts import render
 from rest_framework import viewsets, generics, permissions
 from rest_framework.response import Response
 from rest_framework.request import Request
+from rest_framework.decorators import action
 from .models import Post, Category, CustomUser, Article, Tag, Media
 from .serializers import PostSerializer, CategorySerializer, UserSerializer, ArticleSerializer, TagSerializer, MediaSerializer
-from .permissions import IsAdminOrEditor
+from .permissions import IsAdminOrEditor, CanPublishArticle, CanCreateDraft
 from django.contrib.auth import authenticate
 
 class PostViewSet(viewsets.ModelViewSet):
@@ -43,13 +44,26 @@ class LoginView(generics.GenericAPIView):
 class ArticleViewSet(viewsets.ModelViewSet):
     queryset = Article.objects.all()
     serializer_class = ArticleSerializer
-    permission_classes: list = [permissions.IsAuthenticated, IsAdminOrEditor]
+    
+    def get_permissions(self) -> list:
+        if self.action in ['create', 'update']:
+            return [CanCreateDraft()]
+        elif self.action == 'publish':
+            return [CanPublishArticle()]
+        return [permissions.IsAuthenticated()]
 
     def create(self, request: Request, *args, **kwargs) -> Response:
         return super().create(request, *args, **kwargs)
     
     def update(self, request: Request, *args, **kwargs) -> Response:
         return super().update(request, *args, **kwargs)
+    
+    @action(detail=True, methods=['post'])
+    def publish(self, request: Request, pk=None) -> Response:
+        article = self.get_object()
+        article.status = 'published'
+        article.save()
+        return Response({"message": "Article published", "status": article.status})
     
 class MediaViewSet(viewsets.ModelViewSet):
     queryset = Media.objects.all()
