@@ -63,3 +63,12 @@ class Media(models.Model):
 
     def __str__(self) -> str:
         return f"Media {self.id} uploaded by {self.uploaded_by.username}"
+    
+class Notification(models.Model):
+    recipient = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='notifications')
+    message: str = models.CharField(max_length=255)
+    is_read: bool = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self) -> str:
+        return f"Notification for {self.recipient.username}: {self.message[:20]}{'...' if len(self.message) > 20 else ''}"

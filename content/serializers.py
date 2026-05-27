@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Post, Category, CustomUser, Article, Tag, Media
+from .models import Post, Category, CustomUser, Article, Tag, Media, Notification
 
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
@@ -33,3 +33,8 @@ class MediaSerializer(serializers.ModelSerializer):
     class Meta:
         model = Media
         fields: list[str] = ["id", "file", "uploaded_by", "created_at"]
+
+class NotificationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Notification
+        fields: list[str] = ["id", "recipient", "message", "is_read", "created_at"]

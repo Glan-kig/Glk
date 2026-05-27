@@ -3,10 +3,12 @@ from rest_framework import viewsets, generics, permissions
 from rest_framework.response import Response
 from rest_framework.request import Request
 from rest_framework.decorators import action
-from .models import Post, Category, CustomUser, Article, Tag, Media
-from .serializers import PostSerializer, CategorySerializer, UserSerializer, ArticleSerializer, TagSerializer, MediaSerializer
+from .models import Post, Category, CustomUser, Article, Tag, Media, Notification
+from .serializers import PostSerializer, CategorySerializer, UserSerializer, ArticleSerializer, TagSerializer, MediaSerializer, NotificationSerializer
 from .permissions import IsAdminOrEditor, CanPublishArticle, CanCreateDraft
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate, get_user_model
+
+User = get_user_model()
 
 class PostViewSet(viewsets.ModelViewSet):
     queryset = Post.objects.all()
@@ -58,6 +60,16 @@ class ArticleViewSet(viewsets.ModelViewSet):
     def update(self, request: Request, *args, **kwargs) -> Response:
         return super().update(request, *args, **kwargs)
     
+    def perform_create(self, serializer) -> None:
+        article = serializer.save()
+
+        editors = User.objects.filter(role__in=['admin', 'editor'])
+        for editor in editors:
+            Notification.objects.create(
+                recipient=editor, 
+                message=f"Nouvel article en attente : '{article.title}' créé par {article.author.username}"
+            )
+
     @action(detail=True, methods=['post'])
     def publish(self, request: Request, pk=None) -> Response:
         article = self.get_object()
@@ -72,3 +84,8 @@ class MediaViewSet(viewsets.ModelViewSet):
 
     def create(self, request: Request, *args, **kwargs) -> Response:
         return super().create(request, *args, **kwargs)
+    
+class NotificationViewSet(viewsets.ModelViewSet):
+    queryset = Notification.objects.all()
+    serializer_class = NotificationSerializer
+    permission_classes: list = [permissions.IsAuthenticated]
