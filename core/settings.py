@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'content',
     'tinymce',
+    'channels',
 ]
 
 MIDDLEWARE = [
@@ -76,6 +77,17 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'core.wsgi.application'
+
+ASGI_APPLICATION = 'core.asgi.application'
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            'hosts': [(os.getenv('REDIS_HOST'), int(os.getenv('REDIS_PORT')))],
+        },
+    },
+}
 
 
 # Database
